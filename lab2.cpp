@@ -4,7 +4,7 @@
 #include <iostream>
 #include <math.h>
 
-using std::cout;
+using std::cout; 
 using std::cin;
 using std::endl;
 using std::system;
@@ -16,9 +16,10 @@ using std::fabs;
 auto main()->int{
     setlocale(LC_ALL, ".UTF8"); // Локаль 
     const float TOL = 1e-1;
-    float x1(0),y1(0), x2(0), y2(2), x3(0), y3(0); // Координаты
-    float side12(0), side23(0), side13(0);
-    float sideSqareSum(0), maxSideSqare(0);
+    float tempFsort;
+    float x1{0},y1{0}, x2{0}, y2{2}, x3{0}, y3{0}; // Координаты
+    float side1{0}, side2{0}, side3{0};
+    float sideSqareSum{0}, maxSideSqare{0};
     
     cout << "Введите x1, y1 через пробел: "; // уведомляем пользователя о вводе. 
     cin >> x1 >> y1;
@@ -30,7 +31,8 @@ auto main()->int{
 
     
     if (fabs((x3 - x1) / (x2 - x1) - (y3 - y1) / (y2 - y1)) <= TOL 
-    || (fabs(x1-x2)<= TOL && fabs(x2-x3) <= TOL) || (fabs(y1-y2)<= TOL && fabs(y2-y3) <= TOL)) // Точки 1, 2, 3 - лежат на одной прямой
+    || (fabs(x1-x2)<= TOL && fabs(x2-x3) <= TOL) 
+    || (fabs(y1-y2)<= TOL && fabs(y2-y3) <= TOL)) // Точки 1, 2, 3 - лежат на одной прямой
     { 
         cout << "\nЭто не треугольник.\n";
         system("pause");
@@ -38,40 +40,43 @@ auto main()->int{
     }
     cout << "Это ";
     // расчёт сторон - евклидово расстояние
-    side12 = sqrtf(powf(x2-x1,2) + powf(y2-y1,2));
-    side23 = sqrtf(powf(x2-x3,2) + powf(y2-y3,2));
-    side13 = sqrtf(powf(x3-x1,2) + powf(y3-y1,2));
+    side1 = sqrtf(powf(x2-x1,2) + powf(y2-y1,2));
+    side2 = sqrtf(powf(x2-x3,2) + powf(y2-y3,2));
+    side3 = sqrtf(powf(x3-x1,2) + powf(y3-y1,2));
 
-    if(fabs(side12 - side23) <= TOL && fabs(side23 - side13) <= TOL) // проверка сторон
+    if (side1 - side2 < TOL){
+        tempFsort = side1;
+        side1 = side2;
+        side2 = tempFsort;
+    }
+    if (side2 - side3 < TOL){
+        tempFsort = side2;
+        side2 = side3;
+        side3 = tempFsort;
+    }
+    if (side1 - side2 < TOL){
+        tempFsort = side1;
+        side1 = side2;
+        side2 = tempFsort;
+    }
+
+    maxSideSqare = powf(side1,2);
+    sideSqareSum = powf(side2,2) + powf(side3,2);
+
+    // проверка сторон
+    if(fabs(side1 - side2) <= TOL 
+        && fabs(side2 - side3) <= TOL) 
     {
         cout << "равносторонний ";
     }
-    else if (fabs(side12 - side23) <= TOL || fabs(side23 - side13) <= TOL || fabs(side12 - side13) <= TOL)
+    else if (fabs(side1 - side2) <= TOL 
+            || fabs(side2 - side3) <= TOL)
     {
         cout << "равнобедренный ";
     }else
     {
         cout << "разносторонний ";
     }
-
-    
-    
-    if (side12 - side23 >= TOL && side12 - side13 >= TOL) // расчёт Пифагора) a^2 + b^2 = c^2 где a < c, b < c
-    {
-        maxSideSqare = powf(side12,2);
-        sideSqareSum = powf(side13,2) + powf(side23,2);
-    }
-    else if(side23 - side12 >= TOL && side23 - side13 >= TOL)
-    {
-        maxSideSqare = powf(side23,2);
-        sideSqareSum = powf(side13,2) + powf(side12,2);
-    }
-    else
-    {
-        maxSideSqare = powf(side13,2);
-        sideSqareSum = powf(side23,2) + powf(side12,2);
-    }
-    
 
     if (fabs(maxSideSqare - sideSqareSum) <= pow(TOL,2)) // проверка по пифогору 
     {
